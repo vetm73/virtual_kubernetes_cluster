@@ -1,0 +1,13 @@
+- name: Create mountable dir
+  file: path=/opt/nfs state=directory mode=777 owner=root group=root
+- name: Ensure NFS utilities are installed.
+  apt:
+    pkg:
+      - nfs-common
+      - nfs-kernel-server
+    update_cache: yes
+- name: copy /etc/exports
+  template: src=exports.j2 dest=/etc/exports owner=root group=root
+
+- name: restart nfs server
+  service: name=nfs-kernel-server state=restarted
