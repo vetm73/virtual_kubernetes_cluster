@@ -2,8 +2,10 @@ domain   = 'local'
 
 # use two digits id below, please
 nodes = [
-  { :hostname => 'test1', :id => '01' },
-  { :hostname => 'test2', :id => '02' },
+  { :hostname => 'master', :id => '01' },
+  { :hostname => 'node1', :id => '02' },
+  { :hostname => 'node2', :id => '03' },
+  { :hostname => 'node3', :id => '04' },
 ]
 
 memory = 1024

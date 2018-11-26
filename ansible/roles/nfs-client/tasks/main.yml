@@ -1,5 +1,6 @@
 - debug: var=ansible_all_ipv4_addresses
 - debug: var=ansible_default_ipv4.address
+- debug: var=ansible_eth1.ipv4.address
 
 - name: Ensure NFS common is installed.
   apt: name=nfs-common state=present update_cache=yes
@@ -8,4 +9,4 @@
   file: path=/nfs/share state=directory mode=777 owner=root group=root
 
 - name: set mountpoints
-  mount: name=/nfs/share src=192.168.1.231:/opt/nfs fstype=nfs opts=defaults dump=0 passno=2 state=mounted
+  mount: name=/nfs/share src={{ hostvars['master']['ansible_eth1']['ipv4']['address'] }}:/opt/nfs fstype=nfs opts=defaults dump=0 passno=2 state=mounted

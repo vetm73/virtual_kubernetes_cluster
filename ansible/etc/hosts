@@ -1,4 +1,6 @@
 [masters]
-test1
+master
 [nodes]
-test2
+node1
+node2
+node3
