@@ -1,31 +1,22 @@
 - name: Update repositories cache and install "foo" package
-  apt:
-    pkg:
-      - apt-transport-https
-      - ca-certificates
-      - curl
-      - software-properties-common
-    update_cache: yes
-- name: test1
-  apt_key:
-    url: "https://packages.cloud.google.com/apt/doc/apt-key.gpg"
+  yum:
+    name:
+      - yum-utils
+      - device-mapper-persistent-data
+      - lvm2
     state: present
-- apt_repository:
-    repo: 'deb [arch=amd64] https://download.docker.com/linux/ubuntu  xenial stable'
-    state: present
-- apt_key:
-    url: "https://download.docker.com/linux/ubuntu/gpg"
-    state: present
-- apt_repository:
-    repo: 'deb http://apt.kubernetes.io/ kubernetes-xenial main'
-    state: present
-
-#- shell: "apt-get -y update && apt-get install -y apt-transport-https"
-#- shell: "sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 6A030B21BA07F4FB"
+- name: add Kubernetes' YUM repository
+  yum_repository:
+    name: Kubernetes
+    description: Kubernetes YUM repository
+    baseurl: https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
+    gpgkey: https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+    gpgcheck: yes
+- shell: "yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo"
 - name: install docker and kubernetes
-  apt:
-    pkg:
-      - docker-ce=18.06.1~ce~3-0~ubuntu
+  yum:
+    name:
+      - docker-ce-18.06.1.ce-3.el7
       - kubelet
       - kubeadm
       - kubectl
