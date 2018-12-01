@@ -1,4 +1,11 @@
 ---
+- name: install basics
+  hosts: all
+  become: True
+  gather_facts: False
+  roles:
+    - { role: 'basics', tags: 'basics' }
+
 - name: prepare all
   hosts: all
   become: True
@@ -12,7 +19,7 @@
   gather_facts: False
   roles:
     - { role: 'master', tags: 'master' }
-    - { role: 'nfs-server', tags: 'nfs-server' }
+#    - { role: 'nfs-server', tags: 'nfs-server' }
 
 - name: setup nodes
   hosts: all
@@ -22,4 +29,4 @@
     master_hostname: "{{ groups['masters'][0] }}"
   roles:
     - { role: 'nodes', tags: 'nodes' }
-    - { role: 'nfs-client', tags: 'nfs-client' }
+#    - { role: 'nfs-client', tags: 'nfs-client' }

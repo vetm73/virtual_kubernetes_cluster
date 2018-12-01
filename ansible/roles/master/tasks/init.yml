@@ -4,7 +4,7 @@
   shell: >
        kubeadm reset --force &&
        sysctl -p &&
-       kubeadm init --apiserver-advertise-address={{ hostvars['master']['ansible_eth1']['ipv4']['address'] }} --pod-network-cidr=10.244.0.0/16
+       kubeadm init --apiserver-advertise-address={{ hostvars['core-01']['ansible_eth1']['ipv4']['address'] }} --pod-network-cidr=10.244.0.0/16
   args:
     creates: /etc/kubeadm-join.sh
   register: kubeadm_out

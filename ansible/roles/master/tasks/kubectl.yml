@@ -2,9 +2,9 @@
     path: /root/.bash_profile
     line: 'export KUBECONFIG=/etc/kubernetes/admin.conf'
     create: yes
-- file: path=/home/vagrant/.kube state=directory owner=vagrant
+- file: path=/home/core/.kube state=directory owner=core
 #- file: path=/home/ubuntu/.kube state=directory owner=ubuntu
-- command: cp /etc/kubernetes/admin.conf /home/vagrant/.kube/config
+- command: cp /etc/kubernetes/admin.conf /home/core/.kube/config
 #- command: cp /etc/kubernetes/admin.conf /home/ubuntu/.kube/config
-- file: name=/home/vagrant/.kube/config state=file owner=vagrant
+- file: name=/home/core/.kube/config state=file owner=core
 #- file: name=/home/ubuntu/.kube/config state=file owner=ubuntu

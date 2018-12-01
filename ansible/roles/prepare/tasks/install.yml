@@ -1,26 +1,52 @@
-- name: Update repositories cache and install "foo" package
-  yum:
-    name:
-      - yum-utils
-      - device-mapper-persistent-data
-      - lvm2
-    state: present
-- name: add Kubernetes' YUM repository
-  yum_repository:
-    name: Kubernetes
-    description: Kubernetes YUM repository
-    baseurl: https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
-    gpgkey: https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
-    gpgcheck: yes
-- shell: "yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo"
-- name: install docker and kubernetes
-  yum:
-    name:
-      - docker-ce-18.06.1.ce-3.el7
-      - kubelet
-      - kubeadm
-      - kubectl
-      - ntp
-    state: present
-- name: Set SELinux in permissive mode (effectively disabling it)
-  shell: "setenforce 0 && sed -i 's/^SELINUX=enforcing$/SELINUX=permissive/' /etc/selinux/config"
+- name: Install CNI plugins
+  shell: >
+    CNI_VERSION="v0.6.0";
+    mkdir -p /opt/cni/bin;
+    curl -L "https://github.com/containernetworking/plugins/releases/download/${CNI_VERSION}/cni-plugins-amd64-${CNI_VERSION}.tgz" | tar -C /opt/cni/bin -xz
+
+- name: Install CRI
+  shell: >
+    CRICTL_VERSION="v1.11.1";
+    mkdir -p /opt/bin;
+    curl -L "https://github.com/kubernetes-incubator/cri-tools/releases/download/${CRICTL_VERSION}/crictl-${CRICTL_VERSION}-linux-amd64.tar.gz" | tar -C /opt/bin -xz
+
+- name: Install kubelet, kubectl, kubeadm
+  shell: >
+    RELEASE="$(curl -sSL https://dl.k8s.io/release/stable.txt)";
+    mkdir -p /opt/bin;
+    cd /opt/bin;
+    curl -L --remote-name-all https://storage.googleapis.com/kubernetes-release/release/${RELEASE}/bin/linux/amd64/{kubeadm,kubelet,kubectl};
+    chmod +x {kubeadm,kubelet,kubectl};
+    curl -sSL "https://raw.githubusercontent.com/kubernetes/kubernetes/${RELEASE}/build/debs/kubelet.service" | sed "s:/usr/bin:/opt/bin:g" > /etc/systemd/system/kubelet.service;
+    mkdir -p /etc/systemd/system/kubelet.service.d;
+    curl -sSL "https://raw.githubusercontent.com/kubernetes/kubernetes/${RELEASE}/build/debs/10-kubeadm.conf" | sed "s:/usr/bin:/opt/bin:g" > /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
+
+- name: Enable and start kubelet
+  shell: systemctl enable kubelet && systemctl start kubelet
+
+#- name: Update repositories cache and install "foo" package
+#  yum:
+#    name:
+#      - yum-utils
+#      - device-mapper-persistent-data
+#      - lvm2
+#    state: present
+#- name: add Kubernetes' YUM repository
+#  yum_repository:
+#    name: Kubernetes
+#    description: Kubernetes YUM repository
+#    baseurl: https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
+#    gpgkey: https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+#    gpgcheck: yes
+#- shell: "yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo"
+#- name: install docker and kubernetes
+#  yum:
+#    name:
+#      - docker-ce-18.06.1.ce-3.el7
+#      - kubelet
+#      - kubeadm
+#      - kubectl
+#      - ntp
+#    state: present
+#- name: Set SELinux in permissive mode (effectively disabling it)
+#  shell: "setenforce 0 && sed -i 's/^SELINUX=enforcing$/SELINUX=permissive/' /etc/selinux/config"
