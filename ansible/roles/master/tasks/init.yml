@@ -13,6 +13,10 @@
     line: "{{kubeadm_out.stdout_lines[-1]}}"
     create: yes
   when: kubeadm_out.stdout.find("kubeadm join") != -1
+#- lineinfile:
+#    path: /etc/kubeadm-join.sh
+#    insertbefore: BOF
+#    line: "kubeadm reset --force"
 - service: name=kubelet state=started enabled=yes
 - file: name=/etc/kubectl state=directory
 - name: fix configmap for proxy

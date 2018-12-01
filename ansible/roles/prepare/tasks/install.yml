@@ -22,3 +22,5 @@
       - kubectl
       - ntp
     state: present
+- name: Set SELinux in permissive mode (effectively disabling it)
+  shell: "setenforce 0 && sed -i 's/^SELINUX=enforcing$/SELINUX=permissive/' /etc/selinux/config"
