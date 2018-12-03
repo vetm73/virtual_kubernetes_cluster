@@ -1,6 +1,7 @@
 [masters]
-core-01 ansible_python_interpreter="/opt/bin/python"
+core-01
 [nodes]
-core-02 ansible_python_interpreter="/opt/bin/python"
-core-03 ansible_python_interpreter="/opt/bin/python"
-core-04 ansible_python_interpreter="/opt/bin/python"
+core-02
+core-03
+core-04
+
